@@ -1,0 +1,13 @@
+Nettilaihdutus
+
+Järjestelmän tarkoitus
+
+	Kyseessä on terveellisen elämäntavan ylläpitämisen helpottamiseen 		tarkoitettu tietokantasovellus. Sovelluksen avulla käyttäjät voivat 		kirjata ylös, sekä seurata omia liikuntasuorituksiaan ja ruokavaliotaan. 		Käyttäjät voivat myös sitten verrata arvojaan suositeltuihin arvoihin. 		Järjestelmän tavoitteena on toimia nopeana ja helppokäyttöisenä tapana 		tarkkailla omia elämäntapojaan.
+
+Toimintaympäristö
+
+	Sovellusta on tarkoitus pystyä jokaisen käyttämään omalta koneeltaan 		internet-selaimen kautta.
+
+Rajaukset
+
+	Järjestelmän sisältämät tiedot esimerkiksi erilaisten aktiviteettien 		energiankulutuksesta tai ruokien ja ruoka-aineiden ravintosisällöstä 		saattavat olla aluksi suppeita. Rekisteröityneet käyttäjät kuitenkin 		pystyvät lisäämään tietokantaan uusia tietoja ja näil ollen saatavilla 		olevan tiedon määrä kasvaa.
