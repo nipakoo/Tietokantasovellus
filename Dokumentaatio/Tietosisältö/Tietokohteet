@@ -1,0 +1,55 @@
+Ruokaluokitus
+
+	– Nimi : Merkkijono, max. 50 merkkiä
+	– Ruoka : Merkkijono, max 50 merkkiä
+
+Aktiviteettiluokitus
+
+	– Nimi : Merkkijono, max. 50 merkkiä
+	– Aktiviteetti : Merkkijono, max. 50 merkkiä
+
+Ruokalaji
+
+	– Nimi : Merkkijono, max. 50 merkkiä
+
+Raaka-aine
+
+	– Nimi : Merkkijono, max. 50 merkkiä
+	– Ruokalaji : Merkkijono, max. 50 merkkiä : Ruokalaji, johon tämä aine kuuluu
+	– Kalorit : Desimaaliluku : Kilokalorien määrä
+	– Hiilarit : Desimaaliluku : Hiilihydraattien määrä
+	– Proteiini : Desimaaliluku : Proteiinin määrä
+	– Rasva : Desimaaliluku : Rasvan määrä
+	– Lukumäärä : Desimaaliluku : Montako ruokalajiin kuuluu
+	– Paino : Desimaaliluku : Paljonko ruokalajiin kuuluu
+	– Tilavuus : Desimaaliluku : Paljonko ruokalajiin kuuluu
+
+Aktiviteetti
+
+	– Nimi : Merkkijono, max. 50 merkkiä
+	– Kulutus : Desimaaliluku : Kuinka monta kilokaloria kuluttaa tunnissa
+
+Ravintomäärä
+
+	– ID : Kokonaisluku : Kyseisen ravintokokonaisuuden tunniste
+	– KäyttäjäID : Kokonaisluku : Kokonaisuuden tekijän tunniste
+	– Ruoka : Merkkijono, max. 50 merkkiä : Tähän ravintokokoneisuuteen kuuluvan 		ruokalajin tai raaka-aineen nimi
+
+Aktiviteettimäärä
+
+	– ID : Kokonaisluku : Kyseisen aktiviteettikokonaisuuden tunniste
+	– KäyttäjäID : Kokonaisluku : Kokonaisuuden tekijän tunniste
+	– Aktiviteetti : Merkkijono, max. 50 merkkiä : Tähän aktiviteetti- 		kokonaisuuteen kuuluvan aktiviteetin nimi
+
+Rekisteröitynyt käyttäjä
+
+	– ID : Kokonaisluku : Yksittäisen käyttäjän erottava tunniste
+	– Nimi : Merkkijono, max. 50 merkkiä
+
+Päiväkirjamerkintä
+
+	– KäyttäjäID : Kokonaisluku : Päiväkirjamerkinnän tehneen käyttäjän tunniste
+	– Pvm : Date : Päiväys, jolloin merkintä tehty
+	– RavintoID : Kokonaisluku : Kyseisen merkinnän ravintokokonaisuus
+	– AktiviteettiID : Kokonaisluku : Kyseisen merkinnän aktiviteettikokonaisuus
+	– Kommentti : Merkkijono, max. 200 merkkiä

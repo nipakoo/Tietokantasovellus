@@ -1,0 +1,27 @@
+Hae ravinto/aktiviteettitietoja
+
+	Haetaan tietokannasta tietoja esimerkiksi nimen, luokituksen ja/tai 		kulutukset/ravintosisällön mukaan.
+
+Laske kulutus/nautitut ravintoaineet
+
+	Lasketaan yhteen tietokannasta haettujen tietojen arvoja ja luodaan niistä 		kokonaistiedot.
+
+Tallenna päiväkirjaan ravinto-/aktiviteettitietoja
+
+	Tallennetaan lasketut kokonaistiedot päiväkirjaan. Voidaan myös liittää 	mukaan kommentteja niitä koskien.
+
+Tarkastele raportteja päiväkirjasta
+
+	Tarkastellaan aiemmin tallennettuja päiväkirjamerkintöjä yksittäisiltä 		päiviltä tai yhteenvetoina pidemmiltä jaksoilta viikon, kuukauden tai 		kaikkien merkintöjen ajalta. Yhteenvedot voivat sisältää esimerkiksi 		minimi-, maksimi- tai keskiarvotietoja
+
+Lisää raaka-aineita/ruokia/aktiviteetteja
+
+	Lisätään tietokantaan tietoja ja määritellään niille ravintosisältö/kulutus, 		voidaan myös määrittää luokituksia joihin ne kuuluvat.
+
+Lisää luokituksia
+
+	Lisätään tietokantaan uusia luokituksia, joita sitten voidaan käyttää 		tietojen hakemiseen tai lisäämiseen.
+
+Poista raaka-aineita/ruokia/aktiviteetteja/luokituksia
+
+	Poistetaan tallennettuja tietoja tietokannan validiuden säilyttämiseksi.

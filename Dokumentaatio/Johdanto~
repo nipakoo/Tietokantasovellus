@@ -1,26 +1,12 @@
-
-    Järjestelmän tarkoitus
-        Tiivis kuvaus siitä mistä on kyse.
-        Millaisen toiminnan tukemiseen järjestelmä on tarkoitettu.
-        Mitkä ovat järjestelmän tavoitteet.
-        Nämä tiedot saa yleensä tehtäväkuvauksesta.
-    Toimintaympäristö
-        Missä laite ja ohjelmistoympäristössä järjestelmän on tarkoitus toimia. 
-    Rajaukset
-        Mahdolliset rajaukset koskien määrittelyn, suunnittelun ja toteutuksen laajuutta. 
-    Toteutusympäristö
-        Missä ympäristössä työ toteutetaan. 
-
-Painontarkkailu
+Nettilaihdutus
 
 Järjestelmän tarkoitus
 
 	Kyseessä on terveellisen elämäntavan ylläpitämisen helpottamiseen 		tarkoitettu tietokantasovellus. Sovelluksen avulla käyttäjät voivat 		kirjata ylös, sekä seurata omia liikuntasuorituksiaan ja ruokavaliotaan. 		Käyttäjät voivat myös sitten verrata arvojaan suositeltuihin arvoihin. 		Järjestelmän tavoitteena on toimia nopeana ja helppokäyttöisenä tapana 		tarkkailla omia elämäntapojaan.
 
-Toimintaympäristö
+	Järjestelmän sisältämät tiedot esimerkiksi erilaisten aktiviteettien 		energiankulutuksesta tai ruokien ja ruoka-aineiden ravintosisällöstä 		saattavat olla aluksi suppeita. Rekisteröityneet käyttäjät kuitenkin 		pystyvät lisäämään tietokantaan uusia tietoja ja näil ollen saatavilla 		olevan tiedon määrä kasvaa. Tiedoille myös määritellään luokituksia, jotka 		helpottavat niiden hakemista ja rekisteröityneet käyttäjät pystyvät 		lisäämään uusia luokkia.
 
+Toteutus-/Toimintaympäristö
+	
+	Työ toteutetaan Java-kielellä Netbeans IDE:ssä, web-ominaisuudet 		kirjoitetaan HTML-kielellä ja tietokantojen yhteydessä käytetään SQL-kieltä.
 	Sovellusta on tarkoitus pystyä jokaisen käyttämään omalta koneeltaan 		internet-selaimen kautta.
-
-Rajaukset
-
-	Järjestelmän sisältämät tiedot esimerkiksi erilaisten aktiviteettien 		energiankulutuksesta tai ruokien ja ruoka-aineiden ravintosisällöstä 		saattavat olla aluksi suppeita. Rekisteröityneet käyttäjät kuitenkin 		pystyvät lisäämään tietokantaan uusia tietoja ja näil ollen saatavilla 		olevan tiedon määrä kasvaa.
