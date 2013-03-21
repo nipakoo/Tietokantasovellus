@@ -34,26 +34,26 @@ create table aktiviteetti (
 );
 
 create table ravintomaara (
-   ravintoID integer(10) not null primary key ,
-   lajiNimi varchar(50) foreign key ,
-   aineNimi varchar(50) foreign key
+   ID integer(10) not null primary key ,
+   kayttajaID integer(5) not null foreign key ,
+   ruoka varchar(50) foreign key
 );
 
 create table aktiviteettimaara (
-   aktiviteettiID integer(10) not null primary key ,
-   aktiviteettiNimi varchar(50) foreign key
+   ID integer(10) not null primary key ,
+   kayttajaID integer(5) not null foreign key ,
+   aktiviteetti varcrar foreign key
 );
 
-create table kayttaja (
+create table rekisteroitynytKayttaja (
    ID integer(5) not null primary key ,
    nimi varchar(50)
 );
 
 create table paivakirjamerkinta (
-   merkintaID integer(10) not null primary key ,
+   kayttajaID integer(5) not null primary key ,
+   pvm date not null primary key ,
    ravintoID integer(10) foreign key ,
-   aktiviteettiID integer(10) foreign key,
-   kayttajaID integer(5) foreign key ,
-   pvm Date not null primary key ,
+   aktiviteettiID integer(10)
    kommentti varchar(200)
 );
