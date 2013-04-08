@@ -1,59 +1,119 @@
 create table ruokaluokitus (
-   luokkaNimi varchar(50) not null primary key ,
-   lajiNimi varchar(50) foreign key ,
-   aineNimi varchar(50) foreign key
+   luokkaID integer not null primary key ,
+   luokkaNimi varchar(50)
+);
+
+create table kuuluuRuokaluokkaan (
+   osaID integer not null primary key ,
+   luokkaID integer ,
+   lajiID integer ,
+   aineID integer ,
+   constraint fk_luokka foreign key (luokkaID)
+	references ruokaluokitus
+	on delete cascade ,
+   constraint fk_laji foreign key (lajiID)
+	references ruokalaji
+	on delete cascade ,
+   constraint fk_aine foreign key (aineID)
+	references raakaAine
+	on delete cascade
 );
 
 create table aktiviteettiluokitus (
-   luokkaNimi varchar(50) not null primary key ,
-   aktiviteettiNimi varchar(50) foreign key
+   luokkaID integer not null primary key ,
+   luokkaNimi varchar(50)
+);
+
+create table kuuluuAktiviteettiluokkaan (
+   osaID integer not null primary key ,
+   luokkaID integer ,
+   aktiviteettiID integer ,
+   constraint fk_luokka foreign key (luokkaID)
+	references aktiviteettiluokitus
+        on delete cascade,
+   constraint fk_aktiviteetti foreign key (aktiviteettiID)
+	references aktiviteetti
+	on delete cascade
 );
 
 create table raakaAine (
-   nimi varchar(50) not null primary key ,
+   aineID integer not null primary key ,
+   aineNimi varchar(50) ,
    kalorit decimal(4,1) ,
    hiilarit decimal (4,1) ,
    proteiini decimal(4,1) ,
-   rasva decimal(4,1) ,
+   rasva decimal(4,1)
 );
 
 create table ruokalaji (
-   nimi varchar(50) not null primary key ,
-   osaID integer(10) foreign key
+   lajiID integer not null primary key ,
+   lajiNimi varchar(50)
 );
 
-create table osa (
+create table ainesOsa (
    osaID integer(10) not null primary key ,
-   aineNimi varchar(50) foreign key ,
-   lukumaara integer(3)
+   lajiID integer(10) foreign key ,
+   aineID integer(10) foreign key ,
+   lukumaara desimal(3, 1) ,
+   paino decimal(5, 1)
+   tilavuus(3, 1)
 );
 
 create table aktiviteetti (
-   nimi varchar(50) not null primary key ,
+   aktiviteettiID integer not null primary key ,
+   aktiviteettiNimi varchar(50) ,
    kulutus decimal(4,1)
 );
 
-create table ravintomaara (
-   ID integer(10) not null primary key ,
-   kayttajaID integer(5) not null foreign key ,
-   ruoka varchar(50) foreign key
+create table ravintokokonaisuus (
+   kokonaisuusID integer not null primary key ,
+   merkintaID integer ,
+   constraint fk_merkinta foreign key (merkintaID)
+	references merkinta
+	on delete cascade
 );
 
-create table aktiviteettimaara (
-   ID integer(10) not null primary key ,
-   kayttajaID integer(5) not null foreign key ,
-   aktiviteetti varcrar foreign key
+create table kuuluuRavintokokonaisuuteen (
+   osaID integer(10) not null primary key ,
+   kokonaisuusID integer(10) foreign key ,
+   lajiID integer(10) foreign key ,
+   aineID integer(10) foreign key ,
+   maara decimal(3, 1)
 );
 
-create table rekisteroitynytKayttaja (
-   ID integer(5) not null primary key ,
-   nimi varchar(50)
+create table aktiviteettikokonaisuus (
+   kokonaisuusID integer not null primary key ,
+   merkintaID integer ,
+   constraint fk_merkinta foreign key (merkintaID)
+	references merkinta
+	on delete cascade
 );
 
-create table paivakirjamerkinta (
-   kayttajaID integer(5) not null primary key ,
-   pvm date not null primary key ,
-   ravintoID integer(10) foreign key ,
-   aktiviteettiID integer(10)
-   kommentti varchar(200)
+create table kuuluuAktiviteettikokonaisuuteen (
+   osaID integer not null primary key ,
+   kokonaisuusID integer ,
+   aktiviteettiID integer ,
+   maara decimal(3, 1) ,
+   constraint fk_kokonaisuus foreign key (kokonaisuusID)
+	references aktiviteettikokonaisuus
+	on delete cascade ,
+   constraint fk_aktiviteetti foreign key (aktiviteettiID)
+	references aktiviteetti
+	on delete cascade
+);
+
+create table kayttaja (
+   kayttajaID integer not null primary key ,
+   nimi varchar(50) ,
+   salasana varchar(30)
+);
+
+create table merkinta (
+   merkintaID integer not null primary key ,
+   kayttajaID integer ,
+   pvm date ,
+   kommentti varchar(200) ,
+   constraint fk_kayttaja foreign key (kayttajaID)
+	references kayttaja
+	on delete cascade
 );

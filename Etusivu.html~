@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+	<meta charset="utf-8">
+	<title>Nettilaihdutus</title>
+	<link rel="stylesheet" type="text/css" href="Tyylit.css" />
+	</head>
+
+	<body>
+		<table class="center">
+			<tr>
+
+			<td>
+				<img src="salaatti.jpeg" width ="350" height="240" alt="Salaatti">
+			</td>
+			<td>
+				<h2>Tervetuloa laihtumaan netissä!</h2>
+				<form action="sovellus.html">
+					Käyttäjätunnus: <input type="text" name ="Tunnus"><br>
+					Salasana: <input type="password" name="Salasana"><br>
+					<input type="submit" value="Kirjaudu">
+				</form>
+				<br>
+				<form action="sovellus.html">
+					<input type="submit" value="Jatka palveluun kirjautumatta">
+				</form>
+				<br>
+				<form action="rekisterointi.html">
+					<input type="submit" value="Rekisteröidy">
+				</form>
+			</td>
+			</tr>
+		</table>
+	</body>
+</html>
