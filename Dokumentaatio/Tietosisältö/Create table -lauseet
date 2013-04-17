@@ -51,12 +51,18 @@ create table ruokalaji (
 );
 
 create table ainesOsa (
-   osaID integer(10) not null primary key ,
-   lajiID integer(10) foreign key ,
-   aineID integer(10) foreign key ,
-   lukumaara desimal(3, 1) ,
-   paino decimal(5, 1)
-   tilavuus(3, 1)
+   osaID integer not null primary key ,
+   lajiID integer ,
+   aineID integer ,
+   lukumaara decimal(3, 1) ,
+   paino decimal(5, 1) ,
+   tilavuus decimal(3, 1) ,
+   constraint fk_laji foreign key (lajiID)
+	references ruokalaji
+	on delete cascade ,
+   constraint fk_aine foreign key (aineID)
+	references raakaAine
+	on delete cascade
 );
 
 create table aktiviteetti (

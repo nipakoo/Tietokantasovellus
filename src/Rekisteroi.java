@@ -8,7 +8,6 @@ public class Rekisteroi extends HttpServlet {
     final String serveri = "jdbc:postgresql:niko";
     final String tunnus = "niko";
     final String salasana = "a46f5f4142aaf274";
-
     
     public void doGet(HttpServletRequest req, HttpServletResponse res) 
        throws ServletException, IOException {
@@ -30,7 +29,7 @@ public class Rekisteroi extends HttpServlet {
        }
 
        PreparedStatement stmt = null;
-       ResultSet rs = null; 
+       ResultSet rs = null;
        try {
            String nimi = req.getParameter("tunnus");
 	   
@@ -96,12 +95,13 @@ public class Rekisteroi extends HttpServlet {
        out.println("<a href='/nettilaihdutus/Etusivu.html'>Takaisin etusivulle</a>");
        out.println("</body></html>");
 
-   }
+    }
 
-   public void doPost(HttpServletRequest req, HttpServletResponse res) 
-       throws ServletException, IOException {
-	doGet(req, res);
-   }
+    public void doPost(HttpServletRequest req, HttpServletResponse res) 
+        throws ServletException, IOException {
+	
+        doGet(req, res);
+    }
     
     private Connection yhdista(String ajuri, String serveri, String tunnus, String salasana) {
         try {

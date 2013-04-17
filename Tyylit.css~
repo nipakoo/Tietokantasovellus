@@ -3,3 +3,15 @@ table.center {
 	margin-left:auto;
 	margin-right:auto;
 }
+
+table.right {
+	background-color:blue;
+	margin-left:auto;
+	margin-right:2cm;
+}
+
+table.left {
+	background-color:green;
+	margin-left:2cm;
+	margin-right:auto;
+}
