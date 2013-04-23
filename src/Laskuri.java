@@ -2,6 +2,7 @@ import java.io.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.sql.*;
+import java.util.Calendar;
 
 public class Laskuri extends HttpServlet {
     final String ajuri = "org.postgresql.Driver";
@@ -18,7 +19,7 @@ public class Laskuri extends HttpServlet {
        res.setContentType("text/html");
        out = res.getOutputStream();
        
-       out.println("<html><head<title>Laske ravintosi ja kulutuksesi!</title></head>");
+       out.println("<html><head><title>Laske ravintosi ja kulutuksesi!</title></head>");
        
        Connection yhteys = null;
        yhteys = yhdista(ajuri, serveri, tunnus, salasana);
@@ -35,6 +36,12 @@ public class Laskuri extends HttpServlet {
        out.println("<form action='Lisaaja' method='get'>");
        if (tarkistaJaValitaTunnukset(req, out, yhteys)) {
             out.println("<input type='submit' value='Lisaa ruokia ja aktiviteetteja'>");
+       }
+       out.println("</form>");
+       
+       out.println("<form action='Merkinnat' method='get'>");
+       if (tarkistaJaValitaTunnukset(req, out, yhteys)) {
+           out.println("<input type='submit' value='Tarkastele merkintöjä'>");
        }
        out.println("</form>");
        
@@ -90,20 +97,49 @@ public class Laskuri extends HttpServlet {
        PreparedStatement stmt = null;
        ResultSet rs = null;
        
+       if (req.getParameter("merkitseAktiviteetti") != null) {
+           double lkm = 0;
+           try {
+               lkm = Double.parseDouble(req.getParameter("merkintaMaara"));
+           } catch (NumberFormatException e) {
+               out.println("<p>Lukumäärä ei ollut hyväksyttävä luku</p>");
+           }
+           lisaaMerkintaan(req, out, yhteys, req.getParameter("merkittavanNimi"), lkm,
+                   req.getParameter("kommentti"), 1);
+       } else if (req.getParameter("merkitseRaakaAine") != null) {
+           double lkm = 0;
+           try {
+               lkm = Double.parseDouble(req.getParameter("merkintaMaara"));
+           } catch (NumberFormatException e) {
+               out.println("<p>Lukumäärä ei ollut hyväksyttävä luku</p>");
+           }
+           lisaaMerkintaan(req, out, yhteys, req.getParameter("merkittavanNimi"), lkm,
+                   req.getParameter("kommentti"), 2);
+       } else if (req.getParameter("merkitseRuokalaji") != null) {
+           double lkm = 0;
+           try {
+               lkm = Double.parseDouble(req.getParameter("merkintaMaara"));
+           } catch (NumberFormatException e) {
+               out.println("<p>Lukumäärä ei ollut hyväksyttävä luku</p>");
+           }
+           lisaaMerkintaan(req, out, yhteys, req.getParameter("merkittavanNimi"), lkm,
+                   req.getParameter("kommentti"), 3);
+       }
+       
        try {
 
             if (req.getParameter("haeAktiviteetit") != null) {
 
                 String sql = "SELECT distinct aktiviteettiNimi, kulutus FROM aktiviteetti, kuuluuAktiviteettiluokkaan WHERE "
-                        + "kulutus >= ? ";
+                        + "kulutus >= ? and "
+                        + "aktiviteetti.aktiviteettiID = kuuluuAktiviteettiluokkaan.aktiviteettiID ";
                 
                 if (req.getParameter("nimi") != null && !req.getParameter("nimi").isEmpty()) {
                     sql += "and aktiviteettiNimi like ? ";
                 }
 
                 if (req.getParameter("luokka") != null && !req.getParameter("luokka").isEmpty()) {
-                    sql += "and luokkaID = ? and "
-                        + "aktiviteetti.aktiviteettiID = kuuluuAktiviteettiluokkaan.aktiviteettiID";          
+                    sql += "and luokkaID = ? and ";          
                 }
 
                 stmt = yhteys.prepareStatement(sql);
@@ -128,24 +164,33 @@ public class Laskuri extends HttpServlet {
                 out.println("<tr><th>Nimi</th><th>Kulutus</th></tr>");
 
                 while (rs.next()) {
-                    out.println("<tr><td>" + rs.getString(1) + "</td><td>" + rs.getString(2) + "</td></tr>");
+                    out.println("<tr><td>" + rs.getString(1) + "</td><td>" + rs.getString(2) + "</td>"
+                            + "<td><form action='Laskuri' method='get'>");
+                            if (tarkistaJaValitaTunnukset(req, out, yhteys)) {
+                                out.println(" Paljonko(h): <input type='text' name='merkintaMaara'>"
+                                + " Kommentti: <input type='text' name='kommentti'>"
+                                + "<input type='hidden' name='merkittavanNimi' value='" + rs.getString(1) + "'>"
+                                + "<input type='submit' name='merkitseAktiviteetti' value='Lisää päivän merkintään'>"
+                                + "</form></td></tr>");
+                            }
+                            out.println("</td></form></tr>");
                 }
                 out.println("</table>");
             } else if (req.getParameter("haeRuuat") != null) {
 
                 String sql = "SELECT distinct aineNimi, kalorit, hiilarit, proteiini, rasva FROM raakaAine, kuuluuRuokaluokkaan WHERE "
-                        + "kalorit < ? and "
-                        + "hiilarit < ? and "
-                        + "proteiini < ? and "
-                        + "rasva < ? ";
+                        + "kalorit <= ? and "
+                        + "hiilarit <= ? and "
+                        + "proteiini <= ? and "
+                        + "rasva <= ? and "
+                        + "raakaAine.aineID = kuuluuRuokaluokkaan.aineID " ;
 
                 if (req.getParameter("nimi") != null && !req.getParameter("nimi").isEmpty()) {
                     sql += "and aineNimi like ? ";
                 }
                 
                 if (req.getParameter("luokka") != null && !req.getParameter("luokka").isEmpty()) {
-                    sql += "and luokkaID = ? and "
-                        + "raakaAine.aineID = kuuluuRuokaluokkaan.aineID";          
+                    sql += "and luokkaID = ? ";          
                 }
                 
                 stmt = yhteys.prepareStatement(sql);
@@ -186,22 +231,39 @@ public class Laskuri extends HttpServlet {
 
                 while (rs.next()) {
                     out.println("<tr><td>" + rs.getString(1) + "</td><td>" + rs.getString(2) + "</td><td>" + rs.getString(3) + "</td>"
-                            + "<td>" + rs.getString(4) + "</td><td>" + rs.getString(5) + "</td></tr>");
+                            + "<td>" + rs.getString(4) + "</td><td>" + rs.getString(5) + "</td>"
+                            + "<td><form action='Laskuri' method='get'>");
+                            if (tarkistaJaValitaTunnukset(req, out, yhteys)) {
+                                out.println(" Paljonko(h): <input type='text' name='merkintaMaara'>"
+                                + " Kommentti: <input type='text' name='kommentti'>"
+                                + "<input type='hidden' name='merkittavanNimi' value='" + rs.getString(1) + "'>"
+                                + "<input type='submit' name='merkitseRaakaAine' value='Lisää päivän merkintään'>"
+                                + "</form></td></tr>");
+                            }
+                            out.println("</td></form></tr>");
                 }
-
-                sql = "SELECT distinct lajiNimi, sum(kalorit), sum(hiilarit), sum(proteiini), sum(rasva) FROM raakaAine, ruokalaji, ainesOsa, kuuluuRuokaluokkaan WHERE "
+                sql = "SELECT lajiNimi, sum(kalorit * ainesOsa.lukumaara * ainesOsa.paino * ainesOsa.tilavuus), "
+                        + "sum(hiilarit * ainesOsa.lukumaara * ainesOsa.paino * ainesOsa.tilavuus), "
+                        + "sum(proteiini* ainesOsa.lukumaara * ainesOsa.paino * ainesOsa.tilavuus), "
+                        + "sum(rasva * ainesOsa.lukumaara * ainesOsa.paino * ainesOsa.tilavuus) FROM raakaAine, ruokalaji, ainesOsa ";
+                        if (req.getParameter("luokka") != null && !req.getParameter("luokka").isEmpty()) {
+                            sql += ", kuuluuRuokaluokkaan ";
+                        }
+                        sql += "WHERE "
                         + "ruokalaji.lajiID = ainesOsa.lajiID and "
                         + "ainesOsa.aineID = raakaAine.aineID ";
+                        if (req.getParameter("luokka") != null && !req.getParameter("luokka").isEmpty()) {
+                            sql += "and ruokalaji.lajiID = kuuluuRuokaluokkaan.lajiID ";
+                        }
                 
                 if (req.getParameter("nimi") != null && !req.getParameter("nimi").isEmpty()) {
                     sql += "and lajiNimi like ? ";
                 }
                 
                 if (req.getParameter("luokka") != null && !req.getParameter("luokka").isEmpty()) {
-                    sql += "and luokkaID = ? and "
-                        + "ruokalaji.aineID = kuuluuRuokaluokkaan.aineID ";          
+                    sql += "and luokkaID = ? ";          
                 }
-                sql += "group by ruokalaji.lajiNimi, ainesOsa.lajiID";
+                sql += "GROUP BY ruokalaji.lajiNimi";
                 
                 stmt = yhteys.prepareStatement(sql);
                 
@@ -234,14 +296,25 @@ public class Laskuri extends HttpServlet {
                 } catch (NumberFormatException e) {}
 
                 while (rs.next()) {
-                    if (rs.getDouble(2) < kalorit && rs.getDouble(3) < hiilarit &&
-                            rs.getDouble(4) < proteiini && rs.getDouble(5) < rasva) {
+                    if (rs.getDouble(2) <= kalorit && rs.getDouble(3) <= hiilarit &&
+                            rs.getDouble(4) <= proteiini && rs.getDouble(5) <= rasva) {
                         out.println("<tr><td>" + rs.getString(1) + "</td><td>" + rs.getString(2) + "</td><td>" + rs.getString(3) + "</td>"
-                            + "<td>" + rs.getString(4) + "</td><td>" + rs.getString(5) + "</td></tr>");
+                            + "<td>" + rs.getString(4) + "</td><td>" + rs.getString(5) + "</td>"
+                            + "<td><form action='Laskuri' method='get'>");
+                            if (tarkistaJaValitaTunnukset(req, out, yhteys)) {
+                                out.println(" Paljonko(h): <input type='text' name='merkintaMaara'>"
+                                + " Kommentti: <input type='text' name='kommentti'>"
+                                + "<input type='hidden' name='merkittavanNimi' value='" + rs.getString(1) + "'>"
+                                + "<input type='submit' name='merkitseRuokalaji' value='Lisää päivän merkintään'>"
+                                + "</form></td></tr>");
+                            }
+                            out.println("</td></form></tr>");
                     }
                 }
             }
+            
                 out.println("</table></body></html>");
+                
             } catch (SQLException ee) {
                 out.println("Tietokantavirhe "+ee.getMessage());
             } finally {
@@ -322,5 +395,116 @@ public class Laskuri extends HttpServlet {
         out.println("<input type='hidden' name='account' value='" + account + "'>");
         out.println("<input type='hidden' name='password' value='" + password + "'>");
         return true;
+    }
+    
+    // tyypit 1=aktiviteetti 2=raaka-aine 3=ruokalaji
+    public void lisaaMerkintaan(HttpServletRequest req, ServletOutputStream out, Connection yhteys,
+            String lisattavaNimi, double lkm, String kommentti, int tyyppi) 
+       throws ServletException, IOException {
+        String account = req.getParameter("account");
+        String password = req.getParameter("password");
+        
+        if (account == null || password == null) {
+            return;
+        }
+        
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        
+        int kayttajaID = 0;
+        int merkintaID = 0;
+        int lisattavaID = 0;
+        int osaID = 0;
+        String sql;
+        try {
+            
+            sql = "SELECT max(osaID) FROM kuuluuMerkintaan";
+            stmt = yhteys.prepareStatement(sql);
+            rs = stmt.executeQuery();
+            osaID = rs.getInt(1) + 1;
+            
+            sql = "SELECT kayttajaID FROM kayttaja WHERE nimi = ?";
+            stmt = yhteys.prepareStatement(sql);
+            stmt.setString(1, account);
+            
+            rs = stmt.executeQuery();
+            rs.next();
+            
+            kayttajaID = rs.getInt("kayttajaID");
+            Calendar alku = Calendar.getInstance();
+            alku.set(Calendar.HOUR_OF_DAY, 0);
+            alku.set(Calendar.MINUTE, 0);
+            alku.set(Calendar.SECOND, 0);
+            
+            Calendar loppu = Calendar.getInstance();
+            loppu.set(Calendar.HOUR_OF_DAY, 23);
+            loppu.set(Calendar.MINUTE, 59);
+            loppu.set(Calendar.SECOND, 59);
+            
+            sql = "SELECT merkintaID FROM merkinta WHERE kayttajaID = ? and pvm > ? and pvm < ?";
+            stmt = yhteys.prepareStatement(sql);
+            stmt.setInt(1, kayttajaID);
+            stmt.setDate(2, new Date(alku.getTime().getTime()));
+            stmt.setDate(3, new Date(loppu.getTime().getTime()));
+            
+            rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                merkintaID = rs.getInt("merkintaID");
+            } else {
+                sql = "SELECT max(merkintaID) FROM merkinta";
+                stmt = yhteys.prepareStatement(sql);
+                rs = stmt.executeQuery();
+                
+                merkintaID = rs.getInt("merkintaID");
+                
+                sql = "INSERT INTO merkinta values(?, ?, ?)";
+                stmt = yhteys.prepareStatement(sql);
+                stmt.setInt(1, merkintaID);
+                stmt.setInt(2, kayttajaID);
+                stmt.setDate(3, new Date(Calendar.getInstance().getTime().getTime()));
+            }
+            
+            if (tyyppi == 1) {
+                sql = "SELECT aktiviteettiID FROM aktiviteetti WHERE aktiviteettiNimi = ?";
+                stmt = yhteys.prepareStatement(sql);
+                stmt.setString(1, lisattavaNimi);
+                rs = stmt.executeQuery();
+                
+                rs.next();
+                lisattavaID = rs.getInt(1);
+                
+                sql = "INSERT INTO kuuluuMerkintaan values(?, ?, null, null, ?, ?, ?)";
+            } else if (tyyppi == 2) {
+                sql = "SELECT aineID FROM raakaAine WHERE aineNimi = ?";
+                stmt = yhteys.prepareStatement(sql);
+                stmt.setString(1, lisattavaNimi);
+                rs = stmt.executeQuery();
+                    
+                rs.next();
+                lisattavaID = rs.getInt(1);
+                    
+                sql = "INSERT INTO kuuluuMerkintaan values(?, ?, null, ?, null, ?, ?)";
+            } else {
+                sql = "SELECT lajiID FROM ruokalaji WHERE lajiNimi = ?";
+                stmt = yhteys.prepareStatement(sql);
+                stmt.setString(1, lisattavaNimi);
+                rs = stmt.executeQuery();
+                    
+                rs.next();
+                lisattavaID = rs.getInt(1);
+                    
+                sql = "INSERT INTO kuuluuMerkintaan values(?, ?, ?, null, null, ?, ?)";
+                }
+                stmt = yhteys.prepareStatement(sql);
+                stmt.setInt(1, osaID);
+                stmt.setInt(2, merkintaID);
+                stmt.setInt(3, lisattavaID);
+                stmt.setDouble(4, lkm);
+                stmt.setString(5, kommentti);
+            
+        } catch (SQLException ee) {
+            out.println("Tietokantavirhe "+ee.getMessage());
+        }        
     }
 }

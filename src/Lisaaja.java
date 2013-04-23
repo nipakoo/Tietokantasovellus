@@ -17,7 +17,7 @@ public class Lisaaja extends HttpServlet {
        res.setContentType("text/html");
        out = res.getOutputStream();
        
-       out.println("<html><head<title></title></head>");
+       out.println("<html><head><title></title></head>");
        
        Connection yhteys = null;
        yhteys = yhdista(ajuri, serveri, tunnus, salasana);
@@ -329,7 +329,7 @@ public class Lisaaja extends HttpServlet {
                         int osaID = rs.getInt(1) + 1;
                         
                         if (tyypit[i].equals("lukumaara")) {
-                            sql = "INSERT INTO ainesOsa VALUES(?, ?, ?, ?, null, null)";
+                            sql = "INSERT INTO ainesOsa VALUES(?, ?, ?, ?, 1.0, 1.0)";
                             stmt = yhteys.prepareStatement(sql);
                             stmt.setInt(1, osaID);
                             stmt.setInt(2, ID);
@@ -338,7 +338,7 @@ public class Lisaaja extends HttpServlet {
 
                             stmt.executeUpdate();
                         } else if (tyypit[i].equals("paino")) {
-                            sql = "INSERT INTO ainesOsa VALUES(?, ?, ?, null, ?, null)";
+                            sql = "INSERT INTO ainesOsa VALUES(?, ?, ?, 1.0, ?, 1.0)";
                             stmt = yhteys.prepareStatement(sql);
                             stmt.setInt(1, osaID);
                             stmt.setInt(2, ID);
@@ -347,7 +347,7 @@ public class Lisaaja extends HttpServlet {
 
                             stmt.executeUpdate();
                         } else if (tyypit[i].equals("tilavuus")) {
-                            sql = "INSERT INTO ainesOsa VALUES(?, ?, ?, null, null, ?)";
+                            sql = "INSERT INTO ainesOsa VALUES(?, ?, ?, 1.0, 1.0, ?)";
                             stmt = yhteys.prepareStatement(sql);
                             stmt.setInt(1, osaID);
                             stmt.setInt(2, ID);

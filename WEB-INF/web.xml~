@@ -18,10 +18,6 @@
   <servlet-class>Laskuri</servlet-class>
 </servlet>
 <servlet>
-  <servlet-name>Lisaaja</servlet-name>
-  <servlet-class>Lisaaja</servlet-class>
-</servlet>
-<servlet>
   <servlet-name>Merkinnat</servlet-name>
   <servlet-class>Merkinnat</servlet-class>
 </servlet>
@@ -31,12 +27,8 @@
   <url-pattern>/Rekisteroi</url-pattern> 
 </servlet-mapping>
 <servlet-mapping>
-  <servlet-name>Laskuri</servlet-name>
-  <url-pattern>/Laskuri</url-pattern>
-</servlet-mapping>
-<servlet-mapping>
-  <servlet-name>Lisaaja</servlet-name>
-  <url-pattern>/Lisaaja</url-pattern>
+<servlet-name>Laskuri</servlet-name>
+<url-pattern>/Laskuri</url-pattern>
 </servlet-mapping>
 <servlet-mapping>
   <servlet-name>Merkinnat</servlet-name>

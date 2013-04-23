@@ -16,7 +16,7 @@ public class Rekisteroi extends HttpServlet {
        res.setContentType("text/html");
        out = res.getOutputStream();
        
-       out.println("<html><head<title>Rekisterointi</title></head>");
+       out.println("<html><head><title>Rekisterointi</title></head>");
        
        Connection yhteys = null;
        yhteys = yhdista(ajuri, serveri, tunnus, salasana);
@@ -38,7 +38,12 @@ public class Rekisteroi extends HttpServlet {
           	out.println("<a href='/nettilaihdutus/Rekisteroityminen.html'>Takaisin rekisteröintiin</a>");
           	out.println("</body></html>");
           	return;
-	   }
+	   } else if (nimi.isEmpty()) {
+               out.println("<body bgcolor=white><h1>Syötä haluamasi käyttäjätunnus!</h1>");
+          	out.println("<a href='/nettilaihdutus/Rekisteroityminen.html'>Takaisin rekisteröintiin</a>");
+          	out.println("</body></html>");
+          	return;
+           }
 
 	   String sql = "SELECT kayttajaID FROM kayttaja WHERE nimi = ?";
            stmt = yhteys.prepareStatement(sql);

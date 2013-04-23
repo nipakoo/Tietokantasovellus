@@ -71,46 +71,22 @@ create table aktiviteetti (
    kulutus decimal(4,1)
 );
 
-create table ravintokokonaisuus (
-   kokonaisuusID integer not null primary key ,
-   merkintaID integer ,
-   constraint fk_merkinta foreign key (merkintaID)
-	references merkinta
-	on delete cascade
-);
-
-create table kuuluuRavintokokonaisuuteen (
+create table kuuluuMerkintaan (
    osaID integer not null primary key ,
-   kokonaisuusID integer ,
+   merkintaID integer ,
    lajiID integer ,
    aineID integer ,
-   maara decimal(3, 1) ,
-   constraint fk_kokonaisuus foreign key (kokonaisuusID)
-	references ravintokokonaisuus
+   aktiviteettiID integer ,
+   lukumaara decimal(3, 1) ,
+   kommentti varchar(50) ,
+   constraint fk_merkinta foreign key (merkintaID)
+	references merkinta
 	on delete cascade ,
    constraint fk_laji foreign key (lajiID)
 	references ruokalaji
 	on delete cascade ,
    constraint fk_aine foreign key (aineID)
 	references raakaAine
-	on delete cascade
-);
-
-create table aktiviteettikokonaisuus (
-   kokonaisuusID integer not null primary key ,
-   merkintaID integer ,
-   constraint fk_merkinta foreign key (merkintaID)
-	references merkinta
-	on delete cascade
-);
-
-create table kuuluuAktiviteettikokonaisuuteen (
-   osaID integer not null primary key ,
-   kokonaisuusID integer ,
-   aktiviteettiID integer ,
-   maara decimal(3, 1) ,
-   constraint fk_kokonaisuus foreign key (kokonaisuusID)
-	references aktiviteettikokonaisuus
 	on delete cascade ,
    constraint fk_aktiviteetti foreign key (aktiviteettiID)
 	references aktiviteetti
@@ -127,7 +103,6 @@ create table merkinta (
    merkintaID integer not null primary key ,
    kayttajaID integer ,
    pvm date ,
-   kommentti varchar(200) ,
    constraint fk_kayttaja foreign key (kayttajaID)
 	references kayttaja
 	on delete cascade
