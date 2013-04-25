@@ -16,7 +16,9 @@ public class Rekisteroi extends HttpServlet {
        res.setContentType("text/html");
        out = res.getOutputStream();
        
-       out.println("<html><head><title>Rekisterointi</title></head>");
+       out.println("<html><head>"
+               + "<link rel='stylesheet' type='text/css' href='/nettilaihdutus/Tyylit.css'>"
+               + "<title>Rekisterointi</title></head>");
        
        Connection yhteys = null;
        yhteys = yhdista(ajuri, serveri, tunnus, salasana);

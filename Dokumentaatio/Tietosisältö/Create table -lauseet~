@@ -78,6 +78,7 @@ create table kuuluuMerkintaan (
    aineID integer ,
    aktiviteettiID integer ,
    lukumaara decimal(3, 1) ,
+   kommentti varchar(50) ,
    constraint fk_merkinta foreign key (merkintaID)
 	references merkinta
 	on delete cascade ,
@@ -102,7 +103,6 @@ create table merkinta (
    merkintaID integer not null primary key ,
    kayttajaID integer ,
    pvm date ,
-   kommentti varchar(200) ,
    constraint fk_kayttaja foreign key (kayttajaID)
 	references kayttaja
 	on delete cascade

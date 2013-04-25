@@ -8,7 +8,7 @@
 	</head>
 
 	<body>
-		<table border="1" class="center">
+		<table border="1">
 			<tr>
 
 			<td>
@@ -17,8 +17,8 @@
 			<td>
 				<h2>Tervetuloa laihtumaan netissä!</h2>
 				<form action="Laskuri">
-					Käyttäjätunnus: <input type="text" name ="kayttajatunnus"><br>
-					Salasana: <input type="password" name="salainenSana"><br>
+					Käyttäjätunnus: <input type="text" name ="account"><br>
+					Salasana: <input type="password" name="password"><br>
 					<input type="submit" value="Kirjaudu">
 				</form>
 				<br>

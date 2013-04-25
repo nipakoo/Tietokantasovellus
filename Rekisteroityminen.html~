@@ -16,9 +16,9 @@
 
 		<td>
 			<h2>Syötä haluamasi tunnus ja salasana</h2>
-			<form action="sovellus.html">
-			Käyttäjätunnus: <input type="text" name="Tunnus"><br>
-			Salasana: <input type="password" name="Salasana"><br>
+			<form action="Rekisteroi" method="get">
+			Käyttäjätunnus: <input type="text" name="tunnus"><br>
+			Salasana: <input type="password" name="salasana"><br>
 			<input type="submit" value="Rekisteröidy">
 			</form>
 		</td>

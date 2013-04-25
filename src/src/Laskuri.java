@@ -10,16 +10,16 @@ public class Laskuri extends HttpServlet {
     final String tunnus = "niko";
     final String salasana = "a46f5f4142aaf274";
     
-    
-    
     public void doGet(HttpServletRequest req, HttpServletResponse res) 
        throws ServletException, IOException {
         
        ServletOutputStream out;  
        res.setContentType("text/html");
        out = res.getOutputStream();
-       
-       out.println("<html><head><title>Laske ravintosi ja kulutuksesi!</title></head>");
+
+       out.println("<html><head>"
+               + "<link rel='stylesheet' type='text/css' href='/nettilaihdutus/Tyylit.css'>"
+               + "<title>Laske ravintosi ja kulutuksesi!</title></head>");
        
        Connection yhteys = null;
        yhteys = yhdista(ajuri, serveri, tunnus, salasana);
@@ -98,32 +98,56 @@ public class Laskuri extends HttpServlet {
        ResultSet rs = null;
        
        if (req.getParameter("merkitseAktiviteetti") != null) {
-           double lkm = 0;
+           double lkm = 0.0;
+           String kommentti = req.getParameter("kommentti");
+           if (kommentti.length() > 50) {
+               out.println("<p>Liian pitkä kommentti! Anna lyhyempi!</p>");
+               out.println("</body></html>");
+               return;
+           }
            try {
                lkm = Double.parseDouble(req.getParameter("merkintaMaara"));
            } catch (NumberFormatException e) {
                out.println("<p>Lukumäärä ei ollut hyväksyttävä luku</p>");
+               out.println("</body></html>");
+               return;
            }
            lisaaMerkintaan(req, out, yhteys, req.getParameter("merkittavanNimi"), lkm,
-                   req.getParameter("kommentti"), 1);
+                   kommentti, 1);
        } else if (req.getParameter("merkitseRaakaAine") != null) {
            double lkm = 0;
+           String kommentti = req.getParameter("kommentti");
+           if (kommentti.length() > 50) {
+               out.println("<p>Liian pitkä kommentti! Anna lyhyempi!</p>");
+               out.println("</body></html>");
+               return;
+           }
            try {
                lkm = Double.parseDouble(req.getParameter("merkintaMaara"));
            } catch (NumberFormatException e) {
                out.println("<p>Lukumäärä ei ollut hyväksyttävä luku</p>");
+               out.println("</body></html>");
+               return;
            }
            lisaaMerkintaan(req, out, yhteys, req.getParameter("merkittavanNimi"), lkm,
-                   req.getParameter("kommentti"), 2);
+                   kommentti, 2);
        } else if (req.getParameter("merkitseRuokalaji") != null) {
            double lkm = 0;
+           String kommentti = req.getParameter("kommentti");
+           if (kommentti.length() > 50) {
+               out.println("<p>Liian pitkä kommentti! Anna lyhyempi!</p>");
+               out.println("</body></html>");
+               return;
+           }
            try {
                lkm = Double.parseDouble(req.getParameter("merkintaMaara"));
            } catch (NumberFormatException e) {
                out.println("<p>Lukumäärä ei ollut hyväksyttävä luku</p>");
+               out.println("</body></html>");
+               return;
            }
            lisaaMerkintaan(req, out, yhteys, req.getParameter("merkittavanNimi"), lkm,
-                   req.getParameter("kommentti"), 3);
+                   kommentti, 3);
        }
        
        try {
@@ -139,7 +163,7 @@ public class Laskuri extends HttpServlet {
                 }
 
                 if (req.getParameter("luokka") != null && !req.getParameter("luokka").isEmpty()) {
-                    sql += "and luokkaID = ? and ";          
+                    sql += "and luokkaID = ?";          
                 }
 
                 stmt = yhteys.prepareStatement(sql);
@@ -160,7 +184,7 @@ public class Laskuri extends HttpServlet {
 
                 rs = stmt.executeQuery();
 
-                out.println("<table border='1'>");
+                out.println("<table>");
                 out.println("<tr><th>Nimi</th><th>Kulutus</th></tr>");
 
                 while (rs.next()) {
@@ -226,7 +250,7 @@ public class Laskuri extends HttpServlet {
 
                 rs = stmt.executeQuery();
 
-                out.println("<table border='1'>");
+                out.println("<table>");
                 out.println("<tr><th>Nimi</th><th>Kalorit</th><th>Hiilihydraatit</th><th>Proteiini</th><th>Rasva</th></tr>");
 
                 while (rs.next()) {
@@ -234,7 +258,7 @@ public class Laskuri extends HttpServlet {
                             + "<td>" + rs.getString(4) + "</td><td>" + rs.getString(5) + "</td>"
                             + "<td><form action='Laskuri' method='get'>");
                             if (tarkistaJaValitaTunnukset(req, out, yhteys)) {
-                                out.println(" Paljonko(h): <input type='text' name='merkintaMaara'>"
+                                out.println(" Paljonko(kpl): <input type='text' name='merkintaMaara'>"
                                 + " Kommentti: <input type='text' name='kommentti'>"
                                 + "<input type='hidden' name='merkittavanNimi' value='" + rs.getString(1) + "'>"
                                 + "<input type='submit' name='merkitseRaakaAine' value='Lisää päivän merkintään'>"
@@ -302,7 +326,7 @@ public class Laskuri extends HttpServlet {
                             + "<td>" + rs.getString(4) + "</td><td>" + rs.getString(5) + "</td>"
                             + "<td><form action='Laskuri' method='get'>");
                             if (tarkistaJaValitaTunnukset(req, out, yhteys)) {
-                                out.println(" Paljonko(h): <input type='text' name='merkintaMaara'>"
+                                out.println(" Paljonko(kpl): <input type='text' name='merkintaMaara'>"
                                 + " Kommentti: <input type='text' name='kommentti'>"
                                 + "<input type='hidden' name='merkittavanNimi' value='" + rs.getString(1) + "'>"
                                 + "<input type='submit' name='merkitseRuokalaji' value='Lisää päivän merkintään'>"
@@ -421,6 +445,7 @@ public class Laskuri extends HttpServlet {
             sql = "SELECT max(osaID) FROM kuuluuMerkintaan";
             stmt = yhteys.prepareStatement(sql);
             rs = stmt.executeQuery();
+            rs.next();
             osaID = rs.getInt(1) + 1;
             
             sql = "SELECT kayttajaID FROM kayttaja WHERE nimi = ?";
@@ -431,21 +456,23 @@ public class Laskuri extends HttpServlet {
             rs.next();
             
             kayttajaID = rs.getInt("kayttajaID");
-            Calendar alku = Calendar.getInstance();
-            alku.set(Calendar.HOUR_OF_DAY, 0);
-            alku.set(Calendar.MINUTE, 0);
-            alku.set(Calendar.SECOND, 0);
             
-            Calendar loppu = Calendar.getInstance();
-            loppu.set(Calendar.HOUR_OF_DAY, 23);
-            loppu.set(Calendar.MINUTE, 59);
-            loppu.set(Calendar.SECOND, 59);
+            Calendar cal = Calendar.getInstance();
+            String pvm = "";
+            if (cal.get(Calendar.DAY_OF_MONTH) < 10) {
+                pvm += "0";
+            }
+            pvm += (cal.get(Calendar.DAY_OF_MONTH));
+            if (cal.get(Calendar.MONTH) < 9) {
+                pvm += "0";
+            }
+            pvm += (cal.get(Calendar.MONTH) + 1);
+            pvm += cal.get(Calendar.YEAR);
             
-            sql = "SELECT merkintaID FROM merkinta WHERE kayttajaID = ? and pvm > ? and pvm < ?";
+            sql = "SELECT merkintaID FROM merkinta WHERE kayttajaID = ? and pvm = ?";
             stmt = yhteys.prepareStatement(sql);
             stmt.setInt(1, kayttajaID);
-            stmt.setDate(2, new Date(alku.getTime().getTime()));
-            stmt.setDate(3, new Date(loppu.getTime().getTime()));
+            stmt.setString(2, pvm);
             
             rs = stmt.executeQuery();
             
@@ -455,14 +482,16 @@ public class Laskuri extends HttpServlet {
                 sql = "SELECT max(merkintaID) FROM merkinta";
                 stmt = yhteys.prepareStatement(sql);
                 rs = stmt.executeQuery();
+                rs.next();
                 
-                merkintaID = rs.getInt("merkintaID");
+                merkintaID = rs.getInt(1) + 1;
                 
                 sql = "INSERT INTO merkinta values(?, ?, ?)";
                 stmt = yhteys.prepareStatement(sql);
                 stmt.setInt(1, merkintaID);
                 stmt.setInt(2, kayttajaID);
-                stmt.setDate(3, new Date(Calendar.getInstance().getTime().getTime()));
+                stmt.setString(3, pvm);
+                stmt.executeUpdate();
             }
             
             if (tyyppi == 1) {
@@ -495,14 +524,15 @@ public class Laskuri extends HttpServlet {
                 lisattavaID = rs.getInt(1);
                     
                 sql = "INSERT INTO kuuluuMerkintaan values(?, ?, ?, null, null, ?, ?)";
-                }
-                stmt = yhteys.prepareStatement(sql);
-                stmt.setInt(1, osaID);
-                stmt.setInt(2, merkintaID);
-                stmt.setInt(3, lisattavaID);
-                stmt.setDouble(4, lkm);
-                stmt.setString(5, kommentti);
+            }
+            stmt = yhteys.prepareStatement(sql);
+            stmt.setInt(1, osaID);
+            stmt.setInt(2, merkintaID);
+            stmt.setInt(3, lisattavaID);
+            stmt.setDouble(4, lkm);
+            stmt.setString(5, kommentti);
             
+            stmt.executeUpdate();
         } catch (SQLException ee) {
             out.println("Tietokantavirhe "+ee.getMessage());
         }        

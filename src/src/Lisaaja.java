@@ -17,7 +17,9 @@ public class Lisaaja extends HttpServlet {
        res.setContentType("text/html");
        out = res.getOutputStream();
        
-       out.println("<html><head><title></title></head>");
+       out.println("<html><head>"
+               + "<link rel='stylesheet' type='text/css' href='/nettilaihdutus/Tyylit.css'>"
+               + "<title></title></head>");
        
        Connection yhteys = null;
        yhteys = yhdista(ajuri, serveri, tunnus, salasana);
@@ -40,6 +42,8 @@ public class Lisaaja extends HttpServlet {
        out.println("<input type='submit' name='ruokaLaji' value='Lisaa ruokalajeja'>");
        out.println("</form>");
        
+       out.println("<a href='/nettilaihdutus/Etusivu.html'>Takaisin etusivulle</a>");
+       
        if (req.getParameter("aktiviteetti") != null) {
            out.println("<h1>Lisää aktiviteettejä</h1>");
            out.println("<form action='Lisaaja' method='get'>");
@@ -61,10 +65,10 @@ public class Lisaaja extends HttpServlet {
            out.println("<form action='Lisaaja' method='get'>");
            
            out.println("Nimi: <input type='text' name='nimi'><br>");
-           out.println("Kalorit: <input type='text' name='kalorit'><br>");
-           out.println("Hiilarit: <input type='text' name='hiilarit'><br>");
-           out.println("Proteiini: <input type='text' name='proteiini'><br>");
-           out.println("Rasva: <input type='text' name='rasva'><br>");
+           out.println("Kalorit (/100g): <input type='text' name='kalorit'><br>");
+           out.println("Hiilarit (/100g): <input type='text' name='hiilarit'><br>");
+           out.println("Proteiini (/100g): <input type='text' name='proteiini'><br>");
+           out.println("Rasva (/100g): <input type='text' name='rasva'><br>");
            
            out.println("<select multiple name='luokka'>");
            out.println("<option value='500'>Aamupala</option>");
@@ -138,6 +142,11 @@ public class Lisaaja extends HttpServlet {
                     out.println("</body></html>");
                     return;
                 }
+                if (nimi.length() > 50) {
+                    out.println("<p>Nimi on liian pitkä!</p>");
+                    out.println("</body></html>");
+                    return;
+                }
                 
                 String sql = "SELECT aktiviteettiID FROM aktiviteetti WHERE aktiviteettiNimi = ?";
                 stmt = yhteys.prepareStatement(sql);
@@ -163,7 +172,11 @@ public class Lisaaja extends HttpServlet {
                 stmt.setString(2, nimi);
 
                 try {
-                    stmt.setDouble(3, Double.parseDouble(req.getParameter("kulutus")));
+                    if (Double.parseDouble(req.getParameter("kulutus")) >= 0.0) {
+                        stmt.setDouble(3, Double.parseDouble(req.getParameter("kulutus")));
+                    } else {
+                        stmt.setDouble(3, 0.0);
+                    }
                 } catch (NumberFormatException e) {
                     stmt.setDouble(3, 0.0);
                 }
@@ -201,6 +214,11 @@ public class Lisaaja extends HttpServlet {
                     out.println("</body></html>");
                     return;
                 }
+                if (nimi.length() > 50) {
+                    out.println("<p>Nimi on liian pitkä!</p>");
+                    out.println("</body></html>");
+                    return;
+                }
                 
                 String sql = "SELECT aineID FROM raakaAine WHERE aineNimi = ?";
                 stmt = yhteys.prepareStatement(sql);
@@ -227,22 +245,38 @@ public class Lisaaja extends HttpServlet {
                 stmt.setString(2, nimi);
                 
                 try {
-                    stmt.setDouble(3, Double.parseDouble(req.getParameter("kalorit")));
+                    if (Double.parseDouble(req.getParameter("kalorit")) >= 0.0) {
+                        stmt.setDouble(3, Double.parseDouble(req.getParameter("kalorit")));
+                    } else {
+                        stmt.setDouble(3, 0.0);
+                    }
                 } catch (NumberFormatException e) {
                     stmt.setDouble(3, 0.0);
                 }
                 try {
-                    stmt.setDouble(4, Double.parseDouble(req.getParameter("hiilarit")));
+                    if (Double.parseDouble(req.getParameter("hiilarit")) >= 0.0) {
+                        stmt.setDouble(4, Double.parseDouble(req.getParameter("hiilarit")));
+                    } else {
+                        stmt.setDouble(4, 0.0);
+                    }
                 } catch (NumberFormatException e) {
                     stmt.setDouble(4, 0.0);
                 }
                 try {
-                    stmt.setDouble(5, Double.parseDouble(req.getParameter("proteiini")));
+                    if (Double.parseDouble(req.getParameter("proteiini")) >= 0.0) {
+                        stmt.setDouble(5, Double.parseDouble(req.getParameter("proteiini")));
+                    } else {
+                        stmt.setDouble(5, 0.0);
+                    }
                 } catch (NumberFormatException e) {
                     stmt.setDouble(5, 0.0);
                 }
                 try {
-                    stmt.setDouble(6, Double.parseDouble(req.getParameter("rasva")));
+                    if (Double.parseDouble(req.getParameter("rasva")) >= 0.0) {
+                        stmt.setDouble(6, Double.parseDouble(req.getParameter("rasva")));
+                    } else {
+                        stmt.setDouble(6, 0.0);
+                    }
                 } catch (NumberFormatException e) {
                     stmt.setDouble(6, 0.0);
                 }
@@ -276,6 +310,11 @@ public class Lisaaja extends HttpServlet {
                 
                 if (nimi == null || nimi.isEmpty()) {
                     out.println("<p>Anna vähintään nimi!</p>");
+                    out.println("</body></html>");
+                    return;
+                }
+                if (nimi.length() > 50) {
+                    out.println("<p>Nimi on liian pitkä!</p>");
                     out.println("</body></html>");
                     return;
                 }
@@ -343,7 +382,7 @@ public class Lisaaja extends HttpServlet {
                             stmt.setInt(1, osaID);
                             stmt.setInt(2, ID);
                             stmt.setInt(3, Integer.parseInt(aineID[i]));
-                            stmt.setDouble(4, maara);
+                            stmt.setDouble(4, maara / 100);
 
                             stmt.executeUpdate();
                         } else if (tyypit[i].equals("tilavuus")) {

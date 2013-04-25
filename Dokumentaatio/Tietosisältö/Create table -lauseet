@@ -102,7 +102,7 @@ create table kayttaja (
 create table merkinta (
    merkintaID integer not null primary key ,
    kayttajaID integer ,
-   pvm date ,
+   pvm char(8) ,
    constraint fk_kayttaja foreign key (kayttajaID)
 	references kayttaja
 	on delete cascade
