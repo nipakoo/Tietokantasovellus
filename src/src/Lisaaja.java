@@ -22,7 +22,7 @@ public class Lisaaja extends HttpServlet {
                + "<title></title></head>");
        
        Connection yhteys = null;
-       yhteys = yhdista(ajuri, serveri, tunnus, salasana);
+       yhteys = Tyokalut.yhdista(ajuri, serveri, tunnus, salasana);
        
        PreparedStatement stmt = null;
        ResultSet rs = null;
@@ -455,32 +455,5 @@ public class Lisaaja extends HttpServlet {
         throws ServletException, IOException {
 	
         doGet(req, res);
-    }
-    
-    private Connection yhdista(String ajuri, String serveri, String tunnus, String salasana) {
-        try {
-            Class.forName(ajuri);
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ajurin lataus epäonnistui!\n" + e.getMessage());
-            return null;
-        }
-        
-        Connection yhteys = null;
-        
-        try {
-            yhteys = DriverManager.getConnection(serveri, tunnus, salasana);
-        } catch (SQLException e) {
-            System.out.println("Yhteyden muodostus epäonnistui!\n" + e.getMessage());
-        }
-        
-        return yhteys;
-    }
-    
-    private void suljeYhteys(Connection yhteys) {
-        try {
-            yhteys.close();
-        } catch (SQLException e) {
-            System.out.println("Virhe suljettessa yhteyttä" + e.getMessage());
-        }
     }
 }

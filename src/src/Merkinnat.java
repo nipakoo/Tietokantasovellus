@@ -3,7 +3,6 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class Merkinnat extends HttpServlet {
     final String ajuri = "org.postgresql.Driver";
@@ -32,7 +31,7 @@ public class Merkinnat extends HttpServlet {
                + "<title>Merkinnat</title></head>");
        
        Connection yhteys = null;
-       yhteys = yhdista(ajuri, serveri, tunnus, salasana);
+       yhteys = Tyokalut.yhdista(ajuri, serveri, tunnus, salasana);
        
        if (yhteys==null) {
           out.println("<body bgcolor=white><h1>Tietokantayhtteyden muodostus epäonnistui</h1>");
@@ -52,7 +51,7 @@ public class Merkinnat extends HttpServlet {
        out.println("<select name='pvm'>");
        out.println("<option value=''></option>");
        for (int i = 1; i < 32; i++) {
-           out.println("<option value='");
+           out.print("<option value='");
            if (i < 10) {
                out.print("0");
            }
@@ -62,7 +61,7 @@ public class Merkinnat extends HttpServlet {
        out.println("<select name='kk'>");
        out.println("<option value=''></option>");
        for (int i = 1; i < 13; i++) {
-           out.println("<option value='");
+           out.print("<option value='");
            if (i < 10) {
                out.print("0");
            }
@@ -74,7 +73,7 @@ public class Merkinnat extends HttpServlet {
        out.println("<option value=''></option>");
        out.println("<option value='2013'>2013</option>");
        out.println("</select>");
-       if (!tarkistaJaValitaTunnukset(req, out, yhteys)) {
+       if (!Tyokalut.tarkistaJaValitaTunnukset(req, out, yhteys)) {
            out.println("<p>Et ole kirjautunut</p>");
            return;
        }
@@ -143,65 +142,6 @@ public class Merkinnat extends HttpServlet {
         doGet(req, res);
     }
     
-    private Connection yhdista(String ajuri, String serveri, String tunnus, String salasana) {
-        try {
-            Class.forName(ajuri);
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ajurin lataus epäonnistui!\n" + e.getMessage());
-            return null;
-        }
-        
-        Connection yhteys = null;
-        
-        try {
-            yhteys = DriverManager.getConnection(serveri, tunnus, salasana);
-        } catch (SQLException e) {
-            System.out.println("Yhteyden muodostus epäonnistui!\n" + e.getMessage());
-        }
-        
-        return yhteys;
-    }
-    
-    private void suljeYhteys(Connection yhteys) {
-        try {
-            yhteys.close();
-        } catch (SQLException e) {
-            System.out.println("Virhe suljettessa yhteyttä" + e.getMessage());
-        }
-    }
-    
-    public boolean tarkistaJaValitaTunnukset(HttpServletRequest req, ServletOutputStream out, Connection yhteys) 
-       throws ServletException, IOException {
-        String account = req.getParameter("account");
-        String password = req.getParameter("password");
-        
-        if (account == null || password == null) {
-            return false;
-        }
-        
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        
-        try {
-            String sql = "SELECT salasana FROM kayttaja WHERE nimi = ?";
-            stmt = yhteys.prepareStatement(sql);
-            stmt.setString(1, account);
-            
-            rs = stmt.executeQuery();
-            rs.next();
-            
-            if (!rs.getString("salasana").equals(password)) {
-                return false;
-            }
-        } catch (SQLException ee) {
-            out.println("Tietokantavirhe "+ee.getMessage());
-        }
-        
-        out.println("<input type='hidden' name='account' value='" + account + "'>");
-        out.println("<input type='hidden' name='password' value='" + password + "'>");
-        return true;
-    }
-    
     private void haeMerkinnat(HttpServletRequest req, Connection yhteys, ServletOutputStream out,
             String pvm) throws ServletException, IOException {
         
@@ -222,7 +162,7 @@ public class Merkinnat extends HttpServlet {
                             + "kuuluuMerkintaan, merkinta, kayttaja WHERE nimi = ? and "
                             + "kayttaja.kayttajaID = merkinta.kayttajaID and ";
             if (pvm.length() < 8) {
-                sql += "substring(pvm, 2, 6) = ?";
+                sql += "substring(pvm, 3, 8) = ?";
             } else {
                 sql += "pvm = ?";
             }
@@ -256,7 +196,7 @@ public class Merkinnat extends HttpServlet {
                             + "proteiini * kuuluuMerkintaan.lukumaara, rasva * kuuluuMerkintaan.lukumaara, kommentti, pvm FROM raakaAine, kuuluuMerkintaan, "
                             + "merkinta, kayttaja WHERE nimi = ? and kayttaja.kayttajaID = merkinta.kayttajaID and ";
             if (pvm.length() < 8) {
-                sql += "substring(pvm, 2, 6) = ?";
+                sql += "substring(pvm, 3, 8) = ?";
             } else {
                 sql += "pvm = ?";
             }
@@ -300,7 +240,7 @@ public class Merkinnat extends HttpServlet {
                             + "ruokalaji.lajiID = kuuluuMerkintaan.lajiID and "
                             + "kuuluuMerkintaan.merkintaID = merkinta.merkintaID and ";
             if (pvm.length() < 8) {
-                sql += "substring(pvm, 2, 6) = ?";
+                sql += "substring(pvm, 3, 8) = ?";
             } else {
                 sql += "pvm = ?";
             }

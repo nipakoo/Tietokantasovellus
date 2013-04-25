@@ -22,7 +22,7 @@ public class Laskuri extends HttpServlet {
                + "<title>Laske ravintosi ja kulutuksesi!</title></head>");
        
        Connection yhteys = null;
-       yhteys = yhdista(ajuri, serveri, tunnus, salasana);
+       yhteys = Tyokalut.yhdista(ajuri, serveri, tunnus, salasana);
        
        if (yhteys==null) {
           out.println("<body bgcolor=white><h1>Tietokantayhtteyden muodostus epäonnistui</h1>");
@@ -34,13 +34,13 @@ public class Laskuri extends HttpServlet {
        out.println("<body bgcolor=white>");
        
        out.println("<form action='Lisaaja' method='get'>");
-       if (tarkistaJaValitaTunnukset(req, out, yhteys)) {
+       if (Tyokalut.tarkistaJaValitaTunnukset(req, out, yhteys)) {
             out.println("<input type='submit' value='Lisaa ruokia ja aktiviteetteja'>");
        }
        out.println("</form>");
        
        out.println("<form action='Merkinnat' method='get'>");
-       if (tarkistaJaValitaTunnukset(req, out, yhteys)) {
+       if (Tyokalut.tarkistaJaValitaTunnukset(req, out, yhteys)) {
            out.println("<input type='submit' value='Tarkastele merkintöjä'>");
        }
        out.println("</form>");
@@ -48,7 +48,7 @@ public class Laskuri extends HttpServlet {
        out.println("<form action='Laskuri' method='get'>");
        out.println("<input type='submit' name='aktiviteetti' value='Hae aktiviteettejä'>");
        out.println("<input type='submit' name='ruoka' value='Hae ruokia'>");
-       tarkistaJaValitaTunnukset(req, out, yhteys);
+       Tyokalut.tarkistaJaValitaTunnukset(req, out, yhteys);
        out.println("</form>");
        
        if (req.getParameter("aktiviteetti") != null) {
@@ -64,7 +64,7 @@ public class Laskuri extends HttpServlet {
            out.println("<option value='102'>Talviurheilu</option>");
            out.println("<option value='103'>Joukkuelaji</option>");
            out.println("</select>");
-           tarkistaJaValitaTunnukset(req, out, yhteys);
+           Tyokalut.tarkistaJaValitaTunnukset(req, out, yhteys);
            out.println("<input type='submit' name='haeAktiviteetit' value='Hae'>");
            out.println("</form>");
            
@@ -89,7 +89,7 @@ public class Laskuri extends HttpServlet {
            out.println("<option value='506'>Laktoositon</option>");
            out.println("<option value='507'>HYLA</option>");
            out.println("</select>");
-           tarkistaJaValitaTunnukset(req, out, yhteys);
+           Tyokalut.tarkistaJaValitaTunnukset(req, out, yhteys);
            out.println("<input type='submit' name='haeRuuat' value='Hae'>");
            out.println("</form>");
        }
@@ -190,7 +190,7 @@ public class Laskuri extends HttpServlet {
                 while (rs.next()) {
                     out.println("<tr><td>" + rs.getString(1) + "</td><td>" + rs.getString(2) + "</td>"
                             + "<td><form action='Laskuri' method='get'>");
-                            if (tarkistaJaValitaTunnukset(req, out, yhteys)) {
+                            if (Tyokalut.tarkistaJaValitaTunnukset(req, out, yhteys)) {
                                 out.println(" Paljonko(h): <input type='text' name='merkintaMaara'>"
                                 + " Kommentti: <input type='text' name='kommentti'>"
                                 + "<input type='hidden' name='merkittavanNimi' value='" + rs.getString(1) + "'>"
@@ -257,7 +257,7 @@ public class Laskuri extends HttpServlet {
                     out.println("<tr><td>" + rs.getString(1) + "</td><td>" + rs.getString(2) + "</td><td>" + rs.getString(3) + "</td>"
                             + "<td>" + rs.getString(4) + "</td><td>" + rs.getString(5) + "</td>"
                             + "<td><form action='Laskuri' method='get'>");
-                            if (tarkistaJaValitaTunnukset(req, out, yhteys)) {
+                            if (Tyokalut.tarkistaJaValitaTunnukset(req, out, yhteys)) {
                                 out.println(" Paljonko(kpl): <input type='text' name='merkintaMaara'>"
                                 + " Kommentti: <input type='text' name='kommentti'>"
                                 + "<input type='hidden' name='merkittavanNimi' value='" + rs.getString(1) + "'>"
@@ -325,7 +325,7 @@ public class Laskuri extends HttpServlet {
                         out.println("<tr><td>" + rs.getString(1) + "</td><td>" + rs.getString(2) + "</td><td>" + rs.getString(3) + "</td>"
                             + "<td>" + rs.getString(4) + "</td><td>" + rs.getString(5) + "</td>"
                             + "<td><form action='Laskuri' method='get'>");
-                            if (tarkistaJaValitaTunnukset(req, out, yhteys)) {
+                            if (Tyokalut.tarkistaJaValitaTunnukset(req, out, yhteys)) {
                                 out.println(" Paljonko(kpl): <input type='text' name='merkintaMaara'>"
                                 + " Kommentti: <input type='text' name='kommentti'>"
                                 + "<input type='hidden' name='merkittavanNimi' value='" + rs.getString(1) + "'>"
@@ -362,67 +362,8 @@ public class Laskuri extends HttpServlet {
         doGet(req, res);
     }
     
-    private Connection yhdista(String ajuri, String serveri, String tunnus, String salasana) {
-        try {
-            Class.forName(ajuri);
-        } catch (ClassNotFoundException e) {
-            System.out.println("Ajurin lataus epäonnistui!\n" + e.getMessage());
-            return null;
-        }
-        
-        Connection yhteys = null;
-        
-        try {
-            yhteys = DriverManager.getConnection(serveri, tunnus, salasana);
-        } catch (SQLException e) {
-            System.out.println("Yhteyden muodostus epäonnistui!\n" + e.getMessage());
-        }
-        
-        return yhteys;
-    }
-    
-    private void suljeYhteys(Connection yhteys) {
-        try {
-            yhteys.close();
-        } catch (SQLException e) {
-            System.out.println("Virhe suljettessa yhteyttä" + e.getMessage());
-        }
-    }
-    
-    public boolean tarkistaJaValitaTunnukset(HttpServletRequest req, ServletOutputStream out, Connection yhteys) 
-       throws ServletException, IOException {
-        String account = req.getParameter("account");
-        String password = req.getParameter("password");
-        
-        if (account == null || password == null) {
-            return false;
-        }
-        
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        
-        try {
-            String sql = "SELECT salasana FROM kayttaja WHERE nimi = ?";
-            stmt = yhteys.prepareStatement(sql);
-            stmt.setString(1, account);
-            
-            rs = stmt.executeQuery();
-            rs.next();
-            
-            if (!rs.getString("salasana").equals(password)) {
-                return false;
-            }
-        } catch (SQLException ee) {
-            out.println("Tietokantavirhe "+ee.getMessage());
-        }
-        
-        out.println("<input type='hidden' name='account' value='" + account + "'>");
-        out.println("<input type='hidden' name='password' value='" + password + "'>");
-        return true;
-    }
-    
     // tyypit 1=aktiviteetti 2=raaka-aine 3=ruokalaji
-    public void lisaaMerkintaan(HttpServletRequest req, ServletOutputStream out, Connection yhteys,
+    private void lisaaMerkintaan(HttpServletRequest req, ServletOutputStream out, Connection yhteys,
             String lisattavaNimi, double lkm, String kommentti, int tyyppi) 
        throws ServletException, IOException {
         String account = req.getParameter("account");
