@@ -3,11 +3,8 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.sql.*;
 
+//Uuden käyttäjätunnuksen rekisteröimiseen käytetty luokka.
 public class Rekisteroi extends HttpServlet {
-    final String ajuri = "org.postgresql.Driver";
-    final String serveri = "jdbc:postgresql:niko";
-    final String tunnus = "niko";
-    final String salasana = "a46f5f4142aaf274";
     
     public void doGet(HttpServletRequest req, HttpServletResponse res) 
        throws ServletException, IOException {
@@ -20,7 +17,7 @@ public class Rekisteroi extends HttpServlet {
                + "<title>Rekisterointi</title></head>");
        
        Connection yhteys = null;
-       yhteys = Tyokalut.yhdista(ajuri, serveri, tunnus, salasana);
+       yhteys = Tyokalut.yhdista();
        
        if (yhteys==null) {
           out.println("<body bgcolor=white><h1>Tietokantayhtteyden muodostus epäonnistui</h1>");
@@ -31,6 +28,8 @@ public class Rekisteroi extends HttpServlet {
 
        PreparedStatement stmt = null;
        ResultSet rs = null;
+       
+       //Tallennetaan tietokantaan uudet käyttäjätunnukset.
        try {
            String nimi = req.getParameter("tunnus");
 	   

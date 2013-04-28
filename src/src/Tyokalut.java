@@ -3,9 +3,15 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 import java.sql.*;
 
+//Luokka tarjoaa yleishyödyllisiä metodeja joita useampi muu luokka käyttää.
 public class Tyokalut extends HttpServlet {
+    final static String ajuri = "org.postgresql.Driver";
+    final static String serveri = "jdbc:postgresql:niko";
+    final static String tunnus = "niko";
+    final static String salasana = "a46f5f4142aaf274";
     
-    public static Connection yhdista(String ajuri, String serveri, String tunnus, String salasana) {
+    //Yhdistetään tietokantaan
+    public static Connection yhdista() {
         try {
             Class.forName(ajuri);
         } catch (ClassNotFoundException e) {
@@ -24,6 +30,7 @@ public class Tyokalut extends HttpServlet {
         return yhteys;
     }
     
+    //Tarkistetaan ovatko tunnukset oikein ja välitetään ne eteenpäin.
     public static boolean tarkistaJaValitaTunnukset(HttpServletRequest req, ServletOutputStream out, Connection yhteys) 
        throws ServletException, IOException {
         String account = req.getParameter("account");

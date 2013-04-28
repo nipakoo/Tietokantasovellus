@@ -1,0 +1,5 @@
+Sovellus on asennettu laitoksen tarjoamaan tomcat ympäristöön. Tietokantayhteyden
+luomiseen käytettävät tiedot tulee ohjelmistoa asentaessa sijoittaa servlettien
+ohjelmakoodiin Tyokalut.java-luokkaan. Toiseen ympäristöön siirtäminen onnistuisi
+kopioimalla tiedostot ja muuttamalla tietokannan tiedot oikeiksi Tyokalut.java-
+luokkaan.

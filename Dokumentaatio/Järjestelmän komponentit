@@ -1,0 +1,44 @@
+Etusivu.html
+	Sovelluksen etusivu, josta aloitetaan ja siirrytään muihin ohjelmiston
+	komponentteihin.
+
+Rekisteoityminen.html
+	Sovelluksen rekisteröitymissivu, jolle syötetään omat tunnukset ja josta
+	kutsutaan sitten rekisteröitymisen hoitavaa servlettiä.
+
+salaatti.jpeg
+	Etusivulle sijoitettu kuvatiedosto.
+
+tie.jpeg
+	Rekisteröitymissivulle sijoitettu kuvatiedosto.
+
+Tyylit.css
+	Sivun tyyliä määrittelevä tiedosto.
+
+/src/src/build.xml
+	Tomcatin sovelluksen kasaamiseen käyttämä tiedosto.
+
+/src/src/Laskuri.java
+	Tietojen hakuun ja merkintöjen tekemiseen, sekä muihin toiminnallisuuksiin
+	siirtymiseen käytettävä servlet.
+
+/src/src/Lisaaja.java
+	Tietokannan täydentämiseen käytettävä servlet.
+
+/src/src/Merkinnat.java
+	Omien merkintojen tarkastelemiseen käytettävä servlet.
+
+/src/src/Rekisteroi.java
+	Rekisterointiin, eli tunnuset ja salasanan tallentamiseen käytettävä servlet.
+
+/src/src/Työkalut.java
+	Sovelluksen yleishyödyllisiä metodeja tarjoava luokka.
+
+/WEB-INF/classes
+	Hakemisto, joka sisältää servlettien tavukoodin varsinaisessa ympäristössä.
+
+/WEB-INF/lib
+	Hakemisto, joka sisältää tietokantayhteyden luomiseen käytettävän kirjaston.
+
+/WEB-INF/web.xml
+	Servletit määrittelevä ohjaindokumentti.

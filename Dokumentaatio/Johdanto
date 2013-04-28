@@ -8,5 +8,5 @@ Järjestelmän tarkoitus
 
 Toteutus-/Toimintaympäristö
 	
-	Työ toteutetaan Java-kielellä Netbeans IDE:ssä, web-ominaisuudet 		kirjoitetaan HTML-kielellä ja tietokantojen yhteydessä käytetään SQL-kieltä.
-	Sovellusta on tarkoitus pystyä jokaisen käyttämään omalta koneeltaan 		internet-selaimen kautta.
+	Työ toteutetaan Java-kielellä Netbeans IDE:ssä, web-ominaisuudet 		kirjoitetaan HTML-kielellä ja tietokantojen yhteydessä käytetään SQL:ää.
+	Sovellusta on tarkoitus pystyä jokaisen käyttämään omalta koneeltaan 		internet-selaimen kautta. Tietokantana käytetään postgreSQL-tietokantaa.

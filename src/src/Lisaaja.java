@@ -4,11 +4,8 @@ import javax.servlet.http.*;
 import java.sql.*;
 import java.util.ArrayList;
 
+//Luokka, josta lisätään uusia aktiviteetteja ja ruokia tietokantaan.
 public class Lisaaja extends HttpServlet {
-    final String ajuri = "org.postgresql.Driver";
-    final String serveri = "jdbc:postgresql:niko";
-    final String tunnus = "niko";
-    final String salasana = "a46f5f4142aaf274";
     
     public void doGet(HttpServletRequest req, HttpServletResponse res) 
        throws ServletException, IOException {
@@ -22,7 +19,7 @@ public class Lisaaja extends HttpServlet {
                + "<title></title></head>");
        
        Connection yhteys = null;
-       yhteys = Tyokalut.yhdista(ajuri, serveri, tunnus, salasana);
+       yhteys = Tyokalut.yhdista();
        
        PreparedStatement stmt = null;
        ResultSet rs = null;
@@ -44,6 +41,8 @@ public class Lisaaja extends HttpServlet {
        
        out.println("<a href='/nettilaihdutus/Etusivu.html'>Takaisin etusivulle</a>");
        
+       //Tulostetaan halutu syötemahdollisuudet sen mukaan, mitä nappia käyttäjä painanut,
+       //eli mitä hän haluaa lisätä tietokantaan.
        if (req.getParameter("aktiviteetti") != null) {
            out.println("<h1>Lisää aktiviteettejä</h1>");
            out.println("<form action='Lisaaja' method='get'>");
@@ -133,6 +132,7 @@ public class Lisaaja extends HttpServlet {
             }
        }
        
+       //Lisätään käyttäjän syöttämien tietojen mukainen aktiviteetti tai ruoka tietokantaan.
        try {
             if (req.getParameter("lisaaAktiviteetteja") != null) {
                 String nimi = req.getParameter("nimi");

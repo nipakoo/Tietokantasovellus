@@ -4,11 +4,8 @@ import javax.servlet.http.*;
 import java.sql.*;
 import java.util.ArrayList;
 
+//Luokka käyttäjän omien merkintöjen tarkastelemista varten.
 public class Merkinnat extends HttpServlet {
-    final String ajuri = "org.postgresql.Driver";
-    final String serveri = "jdbc:postgresql:niko";
-    final String tunnus = "niko";
-    final String salasana = "a46f5f4142aaf274";
     
     private double kulutus;
     private double kalorit;
@@ -31,7 +28,7 @@ public class Merkinnat extends HttpServlet {
                + "<title>Merkinnat</title></head>");
        
        Connection yhteys = null;
-       yhteys = Tyokalut.yhdista(ajuri, serveri, tunnus, salasana);
+       yhteys = Tyokalut.yhdista();
        
        if (yhteys==null) {
           out.println("<body bgcolor=white><h1>Tietokantayhtteyden muodostus epäonnistui</h1>");
@@ -45,6 +42,9 @@ public class Merkinnat extends HttpServlet {
        
        out.println("<body bgcolor=white>");
        
+       
+       //Tulostetaan käyttäjälle syötemahdollisuuden, joiden avulla hän voi määrittää
+       //haettavaksi ajaksi joko tarkan päivämäärän tai kokonaisen kuukauden merkinnät.
        out.println("<p>Päivämäärä</p>");
        out.println("<form action='Merkinnat' method='get'>");
        
@@ -83,6 +83,7 @@ public class Merkinnat extends HttpServlet {
        
        out.println("<a href='/nettilaihdutus/Etusivu.html'>Takaisin etusivulle</a>");
 
+       //Haetaan tietokannasta käyttäjän haluamat merkinnät ja tulostetaan ne.
             if (req.getParameter("pvmHaku") != null) {
                 String paiva;
                 String kk;
@@ -142,6 +143,7 @@ public class Merkinnat extends HttpServlet {
         doGet(req, res);
     }
     
+    //Metodi, jolla haetaan ja tulostetaan halutut merkinnät.
     private void haeMerkinnat(HttpServletRequest req, Connection yhteys, ServletOutputStream out,
             String pvm) throws ServletException, IOException {
         

@@ -4,11 +4,10 @@ import javax.servlet.http.*;
 import java.sql.*;
 import java.util.Calendar;
 
+
+//Toimii yhteytenä muihin sivuston servletteihin ja tarjoaa omana toiminnallisuutenaan
+//aktiviteettien ja ruokien haun sekä niiden lisäämisen päivän merkintään.
 public class Laskuri extends HttpServlet {
-    final String ajuri = "org.postgresql.Driver";
-    final String serveri = "jdbc:postgresql:niko";
-    final String tunnus = "niko";
-    final String salasana = "a46f5f4142aaf274";
     
     public void doGet(HttpServletRequest req, HttpServletResponse res) 
        throws ServletException, IOException {
@@ -22,7 +21,7 @@ public class Laskuri extends HttpServlet {
                + "<title>Laske ravintosi ja kulutuksesi!</title></head>");
        
        Connection yhteys = null;
-       yhteys = Tyokalut.yhdista(ajuri, serveri, tunnus, salasana);
+       yhteys = Tyokalut.yhdista();
        
        if (yhteys==null) {
           out.println("<body bgcolor=white><h1>Tietokantayhtteyden muodostus epäonnistui</h1>");
@@ -51,6 +50,7 @@ public class Laskuri extends HttpServlet {
        Tyokalut.tarkistaJaValitaTunnukset(req, out, yhteys);
        out.println("</form>");
        
+       //Annetaan käyttäjälle syöttömahdollisuudet sen mukaan mitä halutaan hakea.
        if (req.getParameter("aktiviteetti") != null) {
            out.println("<h1>Hae aktiviteettejä</h1>");
            out.println("<form action='Laskuri' method='get'>");
@@ -97,6 +97,8 @@ public class Laskuri extends HttpServlet {
        PreparedStatement stmt = null;
        ResultSet rs = null;
        
+       //Jos käyttäjä on haettuaan valinnut lisätä jonkin aktiviteetin tai ruuan
+       //päivän merkintäänsä, joku näistä toteutuu.
        if (req.getParameter("merkitseAktiviteetti") != null) {
            double lkm = 0.0;
            String kommentti = req.getParameter("kommentti");
@@ -150,8 +152,8 @@ public class Laskuri extends HttpServlet {
                    kommentti, 3);
        }
        
+       //Suoritetaan käyttäjän määrittelemä haku ja tulostetaan vastausjoukko.
        try {
-
             if (req.getParameter("haeAktiviteetit") != null) {
 
                 String sql = "SELECT distinct aktiviteettiNimi, kulutus FROM aktiviteetti, kuuluuAktiviteettiluokkaan WHERE "
@@ -362,6 +364,7 @@ public class Laskuri extends HttpServlet {
         doGet(req, res);
     }
     
+    //Metodi, jolla lisätään valittu aktiviteetti tai ruoka päivän merkintään.
     // tyypit 1=aktiviteetti 2=raaka-aine 3=ruokalaji
     private void lisaaMerkintaan(HttpServletRequest req, ServletOutputStream out, Connection yhteys,
             String lisattavaNimi, double lkm, String kommentti, int tyyppi) 

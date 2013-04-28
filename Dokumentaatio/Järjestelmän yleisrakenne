@@ -1,0 +1,4 @@
+Ohjelmiston html sivut ja tyylitiedosto löytyvät suoraan projektikansiosta ja
+käytettyjen servlettien koodi on "src"-hakemistossa. "Dokumentaatio"-hakemistossa
+sijaitsee kaikki sovellukseen liittyvä dokumentaatio ja "WEB-INF"-hakemistossa
+ovat ovat luokat, kirjastot ja määrittelydokumentti.
